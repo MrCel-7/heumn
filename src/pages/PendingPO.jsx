@@ -13,6 +13,8 @@ export default function pendingPO() {
   const [showForm, setShowForm] = useState(false);
   const [showDetail, setShowDetail] = useState(null);
 
+  const [salesList, setSalesList] = useState([]);
+
   const [form, setForm] = useState({
     id: "",
     sales: "",
@@ -27,6 +29,9 @@ export default function pendingPO() {
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("poData")) || [];
     setData(saved);
+
+    const savedSales = JSON.parse(localStorage.getItem("sales")) || [];
+    setSalesList(savedSales);
   }, []);
 
   const saveData = () => {
@@ -130,12 +135,17 @@ export default function pendingPO() {
         {showForm && (
           <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
             <div className="bg-white p-5 rounded w-500">
-              <input
-                placeholder="Sales"
+              <select
                 className="border p-2 w-full mb-2"
                 value={form.sales}
                 onChange={(e) => setForm({ ...form, sales: e.target.value })}
-              />
+              >
+                {salesList.map((item) => (
+                  <option key={item.id} value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
 
               <input
                 placeholder="Customer"

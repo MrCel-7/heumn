@@ -9,6 +9,8 @@ export default function Sales() {
   const [search, setSearch] = useState("");
   const [searchBy, setSearchBy] = useState("name");
 
+  const [phone, setPhone] = useState("");
+
   const [form, setForm] = useState({
     id: "",
     name: "",
@@ -41,6 +43,26 @@ export default function Sales() {
     });
   };
 
+  const formatPhone = (value) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length > 4 && cleaned.length <= 8) {
+      return `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`;
+    } else if (cleaned.length > 8) {
+      return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 8)}-${cleaned.slice(8)}`;
+    }
+
+    return cleaned;
+  };
+
+  const handlePhoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+
+    if (value.length > 13) return;
+
+    setForm({ ...form, phone: formatted });
+  };
+
   const deleteData = (id) => {
     const updated = data.filter((item) => item.id !== id);
     localStorage.setItem("sales", JSON.stringify(updated));
@@ -64,20 +86,22 @@ export default function Sales() {
           <input
             type="text"
             placeholder="Search..."
-            className="border px-3 rounded-xl py-1"
+            className="bg-gray-100 focus:outline-0 rounded-full py-2 px-4 shadow-inner"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <select
-            value={searchBy}
-            onChange={(e) => setSearchBy(e.target.value)}
-            className="border px-3 rounded-xl py-1"
-          >
-            <option value="name">Name</option>
-            <option value="email">Email</option>
-            <option value="phone">Phone</option>
-          </select>
+          <div className="px-4 py-2 bg-gray-100 focus:outline-0 rounded-full shadow-inner">
+            <select
+              value={searchBy}
+              onChange={(e) => setSearchBy(e.target.value)}
+              className="focus:outline-0 bg-transparent pr-5"
+            >
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+            </select>
+          </div>
 
           <button
             onClick={() => setShowSales(true)}
@@ -100,10 +124,10 @@ export default function Sales() {
           <tbody>
             {filteredData.map((item, index) => (
               <tr key={item.id}>
-                <td className="border text-center">{index + 1}</td>
-                <td className="border text-center">{item.name}</td>
-                <td className="border text-center">{item.email}</td>
-                <td className="border text-center">{item.phone}</td>
+                <td className="border px-3">{index + 1}</td>
+                <td className="border px-3">{item.name}</td>
+                <td className="border px-3">{item.email}</td>
+                <td className="border px-3">{formatPhone(item.phone)}</td>
                 <td className="border text-center">
                   <p>⋮</p>
                 </td>
@@ -143,8 +167,8 @@ export default function Sales() {
                 type="text"
                 placeholder="Phone"
                 className="w-full focus:outline-0 bg-transparent"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                onChange={handlePhoneChange}
+                value={formatPhone(form.phone)}
               />
             </div>
             <div className="flex gap-3">
